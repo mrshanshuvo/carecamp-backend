@@ -1,114 +1,431 @@
-# Medical Camp Management System (Backend)
+# CareCamp Backend
 
-[![GitHub Repo](https://img.shields.io/badge/repo-MCMS--backend-blue)](https://github.com/mrshanshuvo/MCMS-backend)
-
-## Overview
-
-The **Medical Camp Management System (MCMS)** is a full-stack application built with **Node.js, Express, and MongoDB (Mongoose ODM)**, providing RESTful APIs to manage medical camps, registrations, payments, analytics, and notifications.
-
----
+Backend API for **CareCamp**, a medical camp management platform that provides authentication, camp management, participant registrations, payments, analytics, notifications, and feedback.
 
 ## Features
 
-- **Authentication & Security**: JWT-based authentication, Firebase Social OAuth verification, bcrypt password hashing, and role-based access control (RBAC).
-- **Core Operations**: Camp creation, updating, deletion, text search, multi-field filtering, sorting, and pagination.
-- **Analytics & Exports**: Dashboard overview metrics, monthly revenue trends, participant breakdowns, and CSV data exports.
-- **Validations & Error Handling**: Server-side Zod payload schemas and centralized error handling middleware.
+* User authentication and authorization
+* JWT-based authentication
+* Firebase Admin integration
+* User management
+* Medical camp management
+* Camp registration
+* Registration management
+* Stripe payment integration
+* Stripe webhook handling
+* Feedback and ratings
+* Analytics
+* Notifications
+* Request validation with Zod
+* API rate limiting
+* Security headers with Helmet
+* CORS configuration
+* HTTP request logging
+* Centralized error handling
+* MongoDB data persistence
 
----
+## Core Modules
+
+The backend is organized into feature-based modules:
+
+```text
+Authentication
+Users
+Camps
+Registrations
+Payments
+Feedback
+Notifications
+Analytics
+Public
+```
+
+Each feature is separated into dedicated routes, controllers, services, and validation logic where applicable.
 
 ## Tech Stack
 
-- **Backend Framework**: Node.js & Express.js (v5)
-- **Database & ODM**: MongoDB with Mongoose (v9)
-- **Security & Headers**: Helmet, CORS, Express Rate Limit, bcryptjs, JsonWebToken
-- **Validation**: Zod (v4)
-- **Logging**: Winston & Morgan
+### Backend
 
----
+* Node.js
+* Express.js
+* JavaScript
+* MongoDB
+* Mongoose
 
-## Demo Credentials & Database Seeding
+### Authentication & Security
 
-Run the seed script to automatically generate standard and organizer demo accounts:
+* JSON Web Tokens (JWT)
+* Firebase Admin SDK
+* bcryptjs
+* Helmet
+* express-rate-limit
+* CORS
+
+### Payments
+
+* Stripe
+* Stripe Webhooks
+
+### Validation & Logging
+
+* Zod
+* Morgan
+* Winston
+
+### Development
+
+* ESLint
+* Prettier
+* Husky
+* lint-staged
+
+## Architecture
+
+The backend follows a modular structure that separates application concerns by domain.
+
+```text
+Request
+   ↓
+Route
+   ↓
+Middleware
+   ↓
+Controller
+   ↓
+Service
+   ↓
+Model
+   ↓
+MongoDB
+```
+
+Common middleware handles:
+
+* Authentication
+* Request validation
+* Security
+* Rate limiting
+* Logging
+* Error handling
+
+## API Modules
+
+### Authentication
+
+Handles:
+
+* User registration
+* User login
+* Authentication
+* Authorization
+
+### Users
+
+Provides user-related management functionality.
+
+### Camps
+
+Handles:
+
+* Creating camps
+* Updating camps
+* Deleting camps
+* Retrieving camps
+* Camp information
+* Camp management
+
+### Registrations
+
+Handles participant registrations and registration management.
+
+### Payments
+
+Handles:
+
+* Stripe payment processing
+* Payment-related operations
+* Stripe webhook events
+
+### Feedback
+
+Handles participant feedback and ratings.
+
+### Notifications
+
+Provides notification-related functionality for application users.
+
+### Analytics
+
+Provides data and statistics required by the application dashboards.
+
+## Security
+
+The API includes several security measures:
+
+* JWT authentication
+* Firebase Admin verification
+* Password hashing with bcryptjs
+* Helmet security headers
+* Configurable CORS
+* Request rate limiting
+* Environment-based secrets
+* Centralized error handling
+* Request validation with Zod
+
+The API rate limiter currently allows up to **100 requests per 15-minute window**.
+
+## Stripe Webhooks
+
+Stripe webhook requests are handled through a dedicated endpoint:
+
+```text
+POST /stripe-webhook
+```
+
+The endpoint uses a raw request body before the normal JSON body parser so Stripe webhook signatures can be processed correctly.
+
+## API Prefixes
+
+The backend supports API routes with both direct and `/api` prefixes for its domain modules.
+
+Examples:
+
+```text
+/auth
+/api/auth
+
+/users
+/api/users
+
+/notifications
+/api/notifications
+
+/analytics
+/api/analytics
+```
+
+The same pattern is also applied to camp, registration, payment, feedback, and public routes.
+
+## Environment Variables
+
+Create a `.env` file based on `.env.example`.
+
+Required configuration includes:
+
+```env
+PORT=5000
+NODE_ENV=development
+CLIENT_URL=http://localhost:5173
+
+MONGODB_URI=your_mongodb_connection_string
+DB_USER=your_database_user
+DB_PASSWORD=your_database_password
+
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRES_IN=7d
+
+STRIPE_SECRET_KEY=your_stripe_secret_key
+STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
+
+FB_SERVICE_KEY=your_firebase_admin_service_key
+```
+
+The repository provides an `.env.example` containing the server, MongoDB, JWT, Stripe, and Firebase Admin configuration fields.
+
+**Never commit real credentials, API keys, database passwords, or Firebase service-account information to the repository.**
+
+## Getting Started
+
+### Prerequisites
+
+Make sure you have installed:
+
+* Node.js
+* npm
+* MongoDB
+* Git
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/mrshanshuvo/carecamp-backend.git
+cd carecamp-backend
+```
+
+### Install Dependencies
+
+```bash
+npm install
+```
+
+### Configure Environment Variables
+
+Create a `.env` file:
+
+```bash
+cp .env.example .env
+```
+
+On Windows PowerShell, you can create the file manually and copy the required variables from `.env.example`.
+
+Configure your MongoDB, JWT, Stripe, Firebase Admin, and client URL settings.
+
+### Run the Development Server
+
+```bash
+npm run dev
+```
+
+The default server port is:
+
+```text
+http://localhost:5000
+```
+
+## Available Scripts
+
+```bash
+npm run dev
+```
+
+Starts the backend server.
+
+```bash
+npm run seed
+```
+
+Seeds application data.
+
+```bash
+npm run db:seed
+```
+
+Runs the database seed script.
 
 ```bash
 npm run seed:users
 ```
 
-### Demo Accounts:
+Seeds user data.
 
-| Role                  | Email                      | Password       | Access Rights                                    |
-| :-------------------- | :------------------------- | :------------- | :----------------------------------------------- |
-| **Organizer / Admin** | `organizer@carecamp.com`   | `Password123!` | Full camp management, analytics, user management |
-| **Participant**       | `participant@carecamp.com` | `Password123!` | Registrations, payments, feedback                |
+```bash
+npm run seed:data
+```
 
----
+Seeds application data.
 
-## API Route Quick Reference
+```bash
+npm run lint
+```
 
-### Authentication & Users
+Checks the project with ESLint.
 
-- `POST /api/auth/register` — Register user account
-- `POST /api/auth/login` — Authenticate and receive JWT token
-- `GET /api/users/profile` — Get current user profile
-- `PUT /api/users/profile` — Update current user profile
-- `GET /api/users` — Admin list all users
-- `PATCH /api/users/:id/role` — Update user role
-- `DELETE /api/users/:id` — Delete user account
+```bash
+npm run lint:fix
+```
 
-### Camps / Items
+Automatically fixes applicable ESLint issues.
 
-- `GET /api/camps` (or `/api/items`) — List camps (search, filter, sort, paginate)
-- `GET /api/camps/:id` — Get camp details by ID
-- `POST /api/camps` — Create camp (Organizer/Admin only)
-- `PUT /api/camps/:campId` — Update camp details (Organizer/Admin only)
-- `DELETE /api/camps/:campId` — Delete camp (Organizer/Admin only)
+```bash
+npm run format
+```
 
-### Analytics & Exports
+Formats the project with Prettier.
 
-- `GET /api/analytics/overview` — Dashboard summary metrics
-- `GET /api/analytics/charts` — Aggregated chart datasets
-- `GET /api/analytics/export/registrations` — Download registrations as CSV
-- `GET /api/analytics/export/payments` — Download payments as CSV
+```bash
+npm run format:check
+```
 
-### Public & Support
+Checks Prettier formatting.
 
-- `POST /api/contact` — Submit contact form message
-- `GET /api/successStories` — Public success stories
-- `GET /api/faqs` — Public FAQ list
-- `GET /api/blogs` — Public blog articles
+## Project Structure
 
----
+```text
+carecamp-backend/
+├── api/
+│   └── index.js
+├── src/
+│   ├── config/
+│   │   ├── db.js
+│   │   ├── env.js
+│   │   ├── firebase.js
+│   │   └── logger.js
+│   ├── middlewares/
+│   │   ├── auth.middleware.js
+│   │   ├── errorHandler.js
+│   │   ├── morgan.middleware.js
+│   │   └── validate.middleware.js
+│   ├── modules/
+│   │   ├── analytics/
+│   │   ├── auth/
+│   │   ├── camps/
+│   │   ├── feedback/
+│   │   ├── notifications/
+│   │   ├── payments/
+│   │   ├── public/
+│   │   ├── registrations/
+│   │   └── users/
+│   ├── app.js
+│   └── server.js
+├── .env.example
+├── .gitignore
+├── package.json
+└── README.md
+```
 
-## Setup & Installation
+## Frontend Integration
 
-1. **Clone Repository**:
+The backend serves as the API layer for the CareCamp frontend.
 
-   ```bash
-   git clone https://github.com/mrshanshuvo/MCMS-backend.git
-   cd MCMS-backend
-   ```
+```text
+┌─────────────────────────┐
+│       CareCamp          │
+│     React Frontend      │
+└────────────┬────────────┘
+             │
+             │ REST API
+             ↓
+┌─────────────────────────┐
+│   CareCamp Backend      │
+│   Node.js + Express     │
+└────────────┬────────────┘
+             │
+       ┌─────┴─────┐
+       ↓           ↓
+   MongoDB       Stripe
+```
 
-2. **Install Dependencies**:
+Authentication also integrates with Firebase Admin for server-side verification.
 
-   ```bash
-   npm install
-   ```
+## Error Handling
 
-3. **Configure Environment Variables**:
-   Copy `.env.example` to `.env` and fill in your MongoDB URI and JWT Secret:
+The application includes centralized error handling and a dedicated not-found handler to provide consistent API error responses.
 
-   ```bash
-   cp .env.example .env
-   ```
+## Logging
 
-4. **Seed Database**:
+The backend uses Morgan for HTTP request logging and Winston for application-level logging.
 
-   ```bash
-   npm run seed:users
-   ```
+## Code Quality
 
-5. **Start Development Server**:
-   ```bash
-   npm start
-   ```
+The project uses:
+
+* ESLint
+* Prettier
+* Husky
+* lint-staged
+
+These tools help maintain consistent formatting and code quality across the backend.
+
+## Project Status
+
+Active backend for the CareCamp medical camp management platform.
+
+## License
+
+This project is licensed under the MIT License.
+
+## Author
+
+**Shahid Hasan Shuvo**
+
+Full Stack Developer
